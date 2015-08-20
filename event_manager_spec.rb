@@ -1,4 +1,4 @@
-require_relative 'event_manager'
+require './lib/event_manager'
 
 describe 'EventManager' do
 
