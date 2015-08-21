@@ -1,4 +1,5 @@
 require './lib/event_manager'
+require 'sunlight/congress'
 
 describe 'EventManager' do
 
@@ -7,7 +8,7 @@ describe 'EventManager' do
     @zipcode_short = "1234"
     @zipcode_empty = ""
     @zipcode_long = "123456"
-    @zipcode_correct = "12345"
+    @zipcode = "00924"
   end
 
   it "fills in info for an empty zipcode" do
@@ -23,7 +24,11 @@ describe 'EventManager' do
   end
 
   it "passes a correct length zipcode" do
-    @em.clean_zipcode(@zipcode_correct).should == "12345"
+    @em.clean_zipcode(@zipcode).should == "00924"
+  end
+
+  it "returns legislator for that zipcode" do
+    @em.legislators_by_zipcode(@zipcode).should == "Pedro Pierluisi"
   end
 
 end
