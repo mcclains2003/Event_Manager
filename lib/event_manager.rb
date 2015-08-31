@@ -4,6 +4,7 @@ require 'erb'
 require_relative 'zipcode'
 require_relative 'phone_number'
 require_relative 'ty_letter'
+require_relative 'time_find'
 
 class EventManager
 
@@ -16,29 +17,22 @@ class EventManager
     legislators = Sunlight::Congress::Legislator.by_zipcode(zipcode)
   end
 
-  # def save_thank_you_letters (id, form_letter)
-    
-  #   Dir.mkdir("output") unless Dir.exists? "output"
-
-  #   filename = "output/thanks_#{id}.html"
-
-  #   File.open(filename, 'w') do |file|
-  #     file.puts form_letter
-  #   end
-  
-  # end
-
   def run(filename)
     contents = CSV.open(filename, headers: true, header_converters: :symbol)
 
     template_letter = File.read "./form_letter.erb"
     erb_template = ERB.new template_letter
+    hour_counter = Hash.new(0)
+    day_counter = Hash.new(0)
 
     contents.each do |row|
       id = row[0]
       name = row[:first_name]
       phone = PhoneNumber.clean_phone_num(row[:homephone])
       zipcode = Zipcode.clean_zipcode(row[:zipcode])
+      time = DateTime.strptime(row[:regdate], "%m/%d/%y %k:%M")
+      hour_counter[time.hour] += 1
+      day_counter[time.wday] += 1
 
       legislators = legislators_by_zipcode(zipcode)
 
@@ -47,6 +41,9 @@ class EventManager
       TYLetter.save_thank_you_letters(id, form_letter)
 
     end
+
+    puts "The top hours for advertising are #{TimeFind.hour_picker(hour_counter)}"
+    puts "The top day for advertising is #{TimeFind.day_picker(day_counter)}"
 
   end
 
