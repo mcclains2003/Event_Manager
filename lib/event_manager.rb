@@ -5,16 +5,13 @@ require_relative 'zipcode'
 require_relative 'phone_number'
 require_relative 'ty_letter'
 require_relative 'time_find'
+require_relative 'leg_by_zip'
 
 class EventManager
 
   def initialize
     Sunlight::Congress.api_key = "e179a6973728c4dd3fb1204283aaccb5"
     puts "EventManager Initialized!"
-  end
-
-  def legislators_by_zipcode(zipcode)
-    legislators = Sunlight::Congress::Legislator.by_zipcode(zipcode)
   end
 
   def run(filename)
@@ -34,7 +31,7 @@ class EventManager
       hour_counter[time.hour] += 1
       day_counter[time.wday] += 1
 
-      legislators = legislators_by_zipcode(zipcode)
+      legislators = LegByZip.legislators_by_zipcode(zipcode)
 
       form_letter = erb_template.result(binding)
 
